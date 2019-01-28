@@ -87,6 +87,7 @@ public class AddressBook {
     private static final String MESSAGE_ERROR_READING_FROM_FILE = "Unexpected error: unable to read from file: %1$s";
     private static final String MESSAGE_ERROR_WRITING_TO_FILE = "Unexpected error: unable to write to file: %1$s";
     private static final String MESSAGE_PERSONS_FOUND_OVERVIEW = "%1$d persons found!";
+    private static final String MESSAGE_PERSONS_FAV_OVERVIEW = "Added to favorite list!";
     private static final String MESSAGE_STORAGE_FILE_CREATED = "Created new empty storage file: %1$s";
     private static final String MESSAGE_WELCOME = "Welcome to your Address Book!";
     private static final String MESSAGE_USING_DEFAULT_FILE = "Using default storage file : " + DEFAULT_STORAGE_FILEPATH;
@@ -116,6 +117,12 @@ public class AddressBook {
             + "keywords (case-sensitive) and adds them to a list of favorite contacts.";
     private static final String COMMAND_FAVORITE_PARAMETERS = "KEYWORD [MORE_KEYWORDS]";
     private static final String COMMAND_FAVORITE_EXAMPLE = COMMAND_FAVORITE_WORD + " alice bob charlie";
+
+    private static final String COMMAND_FAVLIST_WORD = "favList";
+    private static final String COMMAND_FAVLIST_DESC = "Displays the list of all favorite contacts.";
+    private static final String COMMAND_FAVLIST_PARAMETERS = "KEYWORD [MORE_KEYWORDS]";
+    private static final String COMMAND_FAVLIST_EXAMPLE = COMMAND_FAVLIST_WORD;
+
 
     private static final String COMMAND_LIST_WORD = "list";
     private static final String COMMAND_LIST_DESC = "Displays all persons as a list with index numbers.";
@@ -388,6 +395,8 @@ public class AddressBook {
                 return executeFavoritePersons(commandArgs);
             case COMMAND_LIST_WORD:
                 return executeListAllPersonsInAddressBook();
+            case COMMAND_FAVLIST_WORD:
+                return executeListFavoritePersons(commandArgs);
             case COMMAND_DELETE_WORD:
                 return executeDeletePerson(commandArgs);
             case COMMAND_CLEAR_WORD:
@@ -481,8 +490,24 @@ public class AddressBook {
         final ArrayList<String[]> personsFound = getPersonsWithNameContainingAnyKeyword(keywords);
         showToUser(personsFound);
         //Add logic to add personsFound to FAV_PERSON array list
-        return getMessageForPersonsDisplayedSummary(personsFound);
+        for (String[] person : personsFound) {
+            addPersonToFavorites(person);
+        }
+        return MESSAGE_PERSONS_FAV_OVERVIEW;
     }
+
+    /**
+     * Lists all contacts on the favorite list
+     *
+     * @param commandArgs full command args string from the user
+     * @return feedback display message for the operation result
+     */
+    private static String executeListFavoritePersons(String commandArgs) {
+        ArrayList<String[]> toBeDisplayed = FAV_PERSONS;
+        showToUser(toBeDisplayed);
+        return getMessageForPersonsDisplayedSummary(toBeDisplayed);
+    }
+
 
     /**
      * Constructs a feedback message to summarise an operation that displayed a listing of persons.
@@ -813,6 +838,11 @@ public class AddressBook {
     private static void addPersonToAddressBook(String[] person) {
         ALL_PERSONS.add(person);
         savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
+    }
+
+    private static void addPersonToFavorites(String[] person) {
+        FAV_PERSONS.add(person);
+        savePersonsToFile(FAV_PERSONS, storageFilePath);
     }
 
     /**
