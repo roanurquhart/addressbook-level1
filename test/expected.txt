@@ -171,6 +171,11 @@
 || 
 || 5 persons found!
 || ===================================================
+|| Enter command: || [Command entered:  favorite Potato]
+|| 	1. Esther Potato  Phone Number: 555555  Email: esther@notreal.potato
+|| 
+|| Added to favorite list!
+|| ===================================================
 || Enter command: || [Command entered:  find]
 || 
 || 0 persons found!
